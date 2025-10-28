@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { PullRequest, ColumnConfig, Label } from '../types';
+import type { ColumnConfig, Label, PullRequest } from '../types';
 import { PRTable } from './PRTable';
 
 interface GroupedPRDisplayProps {
@@ -25,9 +25,7 @@ export function GroupedPRDisplay({
   groupByLabels,
   availableLabels,
 }: GroupedPRDisplayProps) {
-  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
-    new Set(groupByLabels)
-  );
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(groupByLabels));
 
   const toggleGroup = (labelName: string) => {
     setExpandedGroups((prev) => {
@@ -44,13 +42,13 @@ export function GroupedPRDisplay({
   // Group PRs by selected labels
   const groups: PRGroup[] = groupByLabels.map((labelName) => {
     const label = availableLabels.find((l) => l.name === labelName);
-    
+
     // Check if this is a prefix match - a prefix is when:
     // 1. The selected label doesn't contain a colon, AND
     // 2. There exists at least one label in availableLabels that starts with "selectedLabel:"
-    const isPrefix = !labelName.includes(':') && 
-      availableLabels.some((l) => l.name.startsWith(`${labelName}:`));
-    
+    const isPrefix =
+      !labelName.includes(':') && availableLabels.some((l) => l.name.startsWith(`${labelName}:`));
+
     const prsWithLabel = pullRequests.filter((pr) =>
       pr.labels.some((l) => {
         if (isPrefix) {
@@ -71,16 +69,18 @@ export function GroupedPRDisplay({
 
   // PRs that don't match any selected label (including prefix matches)
   const ungroupedPRs = pullRequests.filter(
-    (pr) => !pr.labels.some((prLabel) => 
-      groupByLabels.some((selectedLabel) => {
-        const isPrefix = !selectedLabel.includes(':') && 
-          availableLabels.some((l) => l.name.startsWith(`${selectedLabel}:`));
-        if (isPrefix) {
-          return prLabel.name.startsWith(`${selectedLabel}:`);
-        }
-        return prLabel.name === selectedLabel;
-      })
-    )
+    (pr) =>
+      !pr.labels.some((prLabel) =>
+        groupByLabels.some((selectedLabel) => {
+          const isPrefix =
+            !selectedLabel.includes(':') &&
+            availableLabels.some((l) => l.name.startsWith(`${selectedLabel}:`));
+          if (isPrefix) {
+            return prLabel.name.startsWith(`${selectedLabel}:`);
+          }
+          return prLabel.name === selectedLabel;
+        })
+      )
   );
 
   if (isLoading) {
@@ -135,11 +135,7 @@ export function GroupedPRDisplay({
           {expandedGroups.has(group.label) && (
             <div className="border-t border-gray-200">
               {group.pullRequests.length > 0 ? (
-                <PRTable
-                  pullRequests={group.pullRequests}
-                  columns={columns}
-                  isLoading={false}
-                />
+                <PRTable pullRequests={group.pullRequests} columns={columns} isLoading={false} />
               ) : (
                 <div className="p-8 text-center text-gray-500">
                   No pull requests with this label
@@ -183,11 +179,7 @@ export function GroupedPRDisplay({
 
           {expandedGroups.has('__other__') && (
             <div className="border-t border-gray-200">
-              <PRTable
-                pullRequests={ungroupedPRs}
-                columns={columns}
-                isLoading={false}
-              />
+              <PRTable pullRequests={ungroupedPRs} columns={columns} isLoading={false} />
             </div>
           )}
         </div>

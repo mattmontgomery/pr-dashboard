@@ -1,4 +1,4 @@
-import type { GitHubPullRequest, GitHubRepository, GitHubLabel } from './github';
+import type { GitHubLabel, GitHubPullRequest, GitHubRepository } from './github';
 
 // Application-specific types
 export interface Repository {
@@ -111,9 +111,7 @@ export interface PaginatedResponse<T> {
 export type TransformFunction<TInput, TOutput> = (input: TInput) => TOutput;
 
 // Export transform functions
-export const transformRepository = (
-  repo: GitHubRepository
-): Repository => ({
+export const transformRepository = (repo: GitHubRepository): Repository => ({
   id: repo.id,
   name: repo.name,
   fullName: repo.full_name,
@@ -125,12 +123,10 @@ export const transformRepository = (
   lastUpdated: new Date(repo.updated_at),
 });
 
-export const transformPullRequest = (
-  pr: GitHubPullRequest
-): PullRequest => {
+export const transformPullRequest = (pr: GitHubPullRequest): PullRequest => {
   const isMerged = !!pr.merged_at;
   const isDraft = pr.draft;
-  
+
   let state: PullRequest['state'];
   if (isDraft) {
     state = 'draft';

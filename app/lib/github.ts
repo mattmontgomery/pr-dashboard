@@ -1,9 +1,9 @@
 import type {
-  GitHubRepository,
-  GitHubPullRequest,
-  GitHubLabel,
   GitHubAPIError as GitHubAPIErrorType,
+  GitHubLabel,
+  GitHubPullRequest,
   GitHubRateLimit,
+  GitHubRepository,
 } from '../types/github';
 
 export class GitHubAPIError extends Error {
@@ -41,10 +41,7 @@ export class GitHubClient {
     this.baseUrl = options.baseUrl || 'https://api.github.com';
   }
 
-  private async fetch<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+  private async fetch<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     // Check rate limit before making request
     if (this.rateLimitRemaining !== null && this.rateLimitRemaining === 0) {
       const resetTime = this.rateLimitReset || Date.now();
@@ -57,9 +54,7 @@ export class GitHubClient {
       }
     }
 
-    const url = endpoint.startsWith('http')
-      ? endpoint
-      : `${this.baseUrl}${endpoint}`;
+    const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
 
     const response = await fetch(url, {
       ...options,
@@ -108,13 +103,15 @@ export class GitHubClient {
   /**
    * Get repositories for the authenticated user
    */
-  async getRepositories(options: {
-    perPage?: number;
-    page?: number;
-    type?: 'all' | 'owner' | 'public' | 'private' | 'member';
-    sort?: 'created' | 'updated' | 'pushed' | 'full_name';
-    direction?: 'asc' | 'desc';
-  } = {}): Promise<GitHubRepository[]> {
+  async getRepositories(
+    options: {
+      perPage?: number;
+      page?: number;
+      type?: 'all' | 'owner' | 'public' | 'private' | 'member';
+      sort?: 'created' | 'updated' | 'pushed' | 'full_name';
+      direction?: 'asc' | 'desc';
+    } = {}
+  ): Promise<GitHubRepository[]> {
     const params = new URLSearchParams({
       per_page: String(options.perPage || 30),
       page: String(options.page || 1),
@@ -149,9 +146,7 @@ export class GitHubClient {
       page: String(options.page || 1),
     });
 
-    return this.fetch<GitHubPullRequest[]>(
-      `/repos/${owner}/${repo}/pulls?${params}`
-    );
+    return this.fetch<GitHubPullRequest[]>(`/repos/${owner}/${repo}/pulls?${params}`);
   }
 
   /**
@@ -162,9 +157,7 @@ export class GitHubClient {
     repo: string,
     pullNumber: number
   ): Promise<GitHubPullRequest> {
-    return this.fetch<GitHubPullRequest>(
-      `/repos/${owner}/${repo}/pulls/${pullNumber}`
-    );
+    return this.fetch<GitHubPullRequest>(`/repos/${owner}/${repo}/pulls/${pullNumber}`);
   }
 
   /**
@@ -217,8 +210,13 @@ export class GitHubClient {
     );
 
     return results
-      .filter((result): result is PromiseFulfilledResult<{ repository: string; pullRequests: GitHubPullRequest[] }> => 
-        result.status === 'fulfilled'
+      .filter(
+        (
+          result
+        ): result is PromiseFulfilledResult<{
+          repository: string;
+          pullRequests: GitHubPullRequest[];
+        }> => result.status === 'fulfilled'
       )
       .map((result) => result.value);
   }
@@ -237,8 +235,9 @@ export class GitHubClient {
     );
 
     return results
-      .filter((result): result is PromiseFulfilledResult<{ repository: string; labels: GitHubLabel[] }> => 
-        result.status === 'fulfilled'
+      .filter(
+        (result): result is PromiseFulfilledResult<{ repository: string; labels: GitHubLabel[] }> =>
+          result.status === 'fulfilled'
       )
       .map((result) => result.value);
   }

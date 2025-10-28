@@ -37,10 +37,8 @@ export function FilterBar({ filters, availableLabels, onFiltersChange }: FilterB
     });
   };
 
-  const activeFilterCount = 
-    (filters.states?.length || 0) + 
-    (filters.labels?.length || 0) + 
-    (filters.searchQuery ? 1 : 0);
+  const activeFilterCount =
+    (filters.states?.length || 0) + (filters.labels?.length || 0) + (filters.searchQuery ? 1 : 0);
 
   return (
     <div className="bg-white border rounded-lg p-4 space-y-4">
@@ -74,9 +72,7 @@ export function FilterBar({ filters, availableLabels, onFiltersChange }: FilterB
 
       {/* State Filter */}
       <div>
-        <div className="block text-sm font-medium text-gray-700 mb-2">
-          Status
-        </div>
+        <div className="block text-sm font-medium text-gray-700 mb-2">Status</div>
         <div className="flex flex-wrap gap-2">
           {(['open', 'closed', 'merged', 'draft'] as const).map((state) => (
             <button
@@ -98,9 +94,7 @@ export function FilterBar({ filters, availableLabels, onFiltersChange }: FilterB
       {/* Labels Filter */}
       {availableLabels.length > 0 && (
         <div>
-          <div className="block text-sm font-medium text-gray-700 mb-2">
-            Labels
-          </div>
+          <div className="block text-sm font-medium text-gray-700 mb-2">Labels</div>
           <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto">
             {availableLabels.map((label) => (
               <button
@@ -108,17 +102,13 @@ export function FilterBar({ filters, availableLabels, onFiltersChange }: FilterB
                 type="button"
                 onClick={() => handleLabelChange(label.name)}
                 className={`px-3 py-1 text-sm rounded-full border transition-colors ${
-                  filters.labels?.includes(label.name)
-                    ? 'border-2'
-                    : 'border'
+                  filters.labels?.includes(label.name) ? 'border-2' : 'border'
                 }`}
                 style={{
                   backgroundColor: filters.labels?.includes(label.name)
                     ? `#${label.color}`
                     : `#${label.color}20`,
-                  color: filters.labels?.includes(label.name)
-                    ? '#ffffff'
-                    : `#${label.color}`,
+                  color: filters.labels?.includes(label.name) ? '#ffffff' : `#${label.color}`,
                   borderColor: `#${label.color}`,
                 }}
               >

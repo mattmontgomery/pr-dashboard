@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { PRTable } from './components/PRTable';
-import { RepositorySelector } from './components/RepositorySelector';
+import { useEffect, useState } from 'react';
 import { FilterBar } from './components/FilterBar';
 import { GroupedPRDisplay } from './components/GroupedPRDisplay';
 import { LabelGroupSelector } from './components/LabelGroupSelector';
-import { useRepositories } from './hooks/useRepositories';
-import { usePullRequests } from './hooks/usePullRequests';
+import { PRTable } from './components/PRTable';
+import { RepositorySelector } from './components/RepositorySelector';
 import { useColumnConfig } from './hooks/useColumnConfig';
+import { usePullRequests } from './hooks/usePullRequests';
+import { useRepositories } from './hooks/useRepositories';
 import type { FilterOptions, Label } from './types';
 
 export default function Home() {
@@ -43,7 +43,7 @@ export default function Home() {
         const response = await fetch('/api/github/auth');
         const data = await response.json();
         setHasServerToken(data.hasToken);
-        
+
         // If server has a token, we don't need to show the input
         if (data.hasToken) {
           setShowTokenInput(false);
@@ -65,7 +65,7 @@ export default function Home() {
       try {
         const response = await fetch('/api/github/defaults');
         const data = await response.json();
-        
+
         if (data.repositories && data.repositories.length > 0) {
           setSelectedRepositories(data.repositories);
           setHasDefaultRepos(true);
@@ -79,12 +79,20 @@ export default function Home() {
   }, []);
 
   // Hooks
-  const { repositories, isLoading: isLoadingRepos, error: reposError } = useRepositories({
+  const {
+    repositories,
+    isLoading: isLoadingRepos,
+    error: reposError,
+  } = useRepositories({
     token: githubToken,
     autoFetch: !!githubToken,
   });
 
-  const { filteredPullRequests, isLoading: isLoadingPRs, error: prsError } = usePullRequests({
+  const {
+    filteredPullRequests,
+    isLoading: isLoadingPRs,
+    error: prsError,
+  } = usePullRequests({
     token: githubToken,
     repositories: selectedRepositories,
     filters,
@@ -197,13 +205,12 @@ export default function Home() {
             <h1 className="text-2xl font-bold text-gray-900">PR Dashboard</h1>
             <div className="flex items-center gap-4">
               {hasServerToken && (
-                <span className="text-sm text-gray-500">
-                  Using server-configured token
-                </span>
+                <span className="text-sm text-gray-500">Using server-configured token</span>
               )}
               {hasDefaultRepos && selectedRepositories.length > 0 && (
                 <span className="text-sm text-gray-500">
-                  Monitoring {selectedRepositories.length} {selectedRepositories.length === 1 ? 'repository' : 'repositories'}
+                  Monitoring {selectedRepositories.length}{' '}
+                  {selectedRepositories.length === 1 ? 'repository' : 'repositories'}
                 </span>
               )}
               {!hasServerToken && (
@@ -224,9 +231,7 @@ export default function Home() {
         {/* Error Messages */}
         {(reposError || prsError) && (
           <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-800">
-              {reposError || prsError}
-            </p>
+            <p className="text-red-800">{reposError || prsError}</p>
           </div>
         )}
 
@@ -238,10 +243,7 @@ export default function Home() {
                 <h3 className="text-lg font-semibold mb-4">Configured Repositories</h3>
                 <div className="space-y-2">
                   {selectedRepositories.map((repo) => (
-                    <div
-                      key={repo}
-                      className="flex items-center p-2 bg-blue-50 rounded"
-                    >
+                    <div key={repo} className="flex items-center p-2 bg-blue-50 rounded">
                       <svg
                         className="w-4 h-4 text-blue-600 mr-2"
                         fill="currentColor"
@@ -270,7 +272,7 @@ export default function Home() {
                 isLoading={isLoadingRepos}
               />
             )}
-            
+
             {selectedRepositories.length > 0 && (
               <>
                 <FilterBar
@@ -278,7 +280,7 @@ export default function Home() {
                   availableLabels={availableLabels}
                   onFiltersChange={setFilters}
                 />
-                
+
                 <LabelGroupSelector
                   availableLabels={availableLabels}
                   selectedLabels={groupByLabels}
@@ -297,11 +299,11 @@ export default function Home() {
                   {!isLoadingPRs && ` (${filteredPullRequests.length})`}
                 </h2>
               </div>
-              
+
               {selectedRepositories.length === 0 ? (
                 <div className="p-8 text-center text-gray-500">
-                  {hasDefaultRepos 
-                    ? 'Loading pull requests...' 
+                  {hasDefaultRepos
+                    ? 'Loading pull requests...'
                     : 'Select repositories from the sidebar to view pull requests'}
                 </div>
               ) : groupByLabels.length > 0 ? (

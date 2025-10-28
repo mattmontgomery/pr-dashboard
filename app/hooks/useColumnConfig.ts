@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { ColumnConfig, ColumnId } from '../types';
 
 const DEFAULT_COLUMNS: ColumnConfig[] = [
@@ -52,9 +52,7 @@ export function useColumnConfig(): UseColumnConfigResult {
   }, [columns]);
 
   const updateColumn = (id: ColumnId, updates: Partial<ColumnConfig>) => {
-    setColumns((prev) =>
-      prev.map((col) => (col.id === id ? { ...col, ...updates } : col))
-    );
+    setColumns((prev) => prev.map((col) => (col.id === id ? { ...col, ...updates } : col)));
   };
 
   const resetColumns = () => {
@@ -63,9 +61,7 @@ export function useColumnConfig(): UseColumnConfigResult {
 
   const toggleColumnVisibility = (id: ColumnId) => {
     setColumns((prev) =>
-      prev.map((col) =>
-        col.id === id ? { ...col, visible: !col.visible } : col
-      )
+      prev.map((col) => (col.id === id ? { ...col, visible: !col.visible } : col))
     );
   };
 
@@ -74,7 +70,7 @@ export function useColumnConfig(): UseColumnConfigResult {
       const newColumns = [...prev];
       const [movedColumn] = newColumns.splice(fromIndex, 1);
       newColumns.splice(toIndex, 0, movedColumn);
-      
+
       // Update order property
       return newColumns.map((col, index) => ({ ...col, order: index }));
     });

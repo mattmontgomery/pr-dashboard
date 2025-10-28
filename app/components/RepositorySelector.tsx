@@ -80,9 +80,7 @@ export function RepositorySelector({
             />
             <div className="ml-3 flex-1">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-900">
-                  {repo.fullName}
-                </span>
+                <span className="text-sm font-medium text-gray-900">{repo.fullName}</span>
                 {repo.isPrivate && (
                   <span className="ml-2 px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded">
                     Private
@@ -100,9 +98,7 @@ export function RepositorySelector({
       </div>
 
       {repositories.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          No repositories found
-        </div>
+        <div className="text-center py-8 text-gray-500">No repositories found</div>
       )}
 
       <div className="mt-4 pt-4 border-t">

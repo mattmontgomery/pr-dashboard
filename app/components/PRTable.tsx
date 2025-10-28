@@ -1,5 +1,5 @@
-import type { PullRequest, ColumnConfig } from '../types';
 import Image from 'next/image';
+import type { ColumnConfig, PullRequest } from '../types';
 
 interface PRTableProps {
   pullRequests: PullRequest[];
@@ -60,15 +60,15 @@ export function PRTable({ pullRequests, columns, isLoading }: PRTableProps) {
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {pullRequests.map((pr) => (
-            <tr
-              key={pr.id}
-              className="hover:bg-gray-50 transition-colors"
-            >
+            <tr key={pr.id} className="hover:bg-gray-50 transition-colors">
               {visibleColumns.map((column) => {
                 switch (column.id) {
                   case 'number':
                     return (
-                      <td key={column.id} className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td
+                        key={column.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                      >
                         #{pr.number}
                       </td>
                     );
@@ -87,13 +87,19 @@ export function PRTable({ pullRequests, columns, isLoading }: PRTableProps) {
                     );
                   case 'repository':
                     return (
-                      <td key={column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td
+                        key={column.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                      >
                         {pr.repository.fullName}
                       </td>
                     );
                   case 'author':
                     return (
-                      <td key={column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td
+                        key={column.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                      >
                         <div className="flex items-center">
                           <Image
                             src={pr.author.avatarUrl}
@@ -109,14 +115,19 @@ export function PRTable({ pullRequests, columns, isLoading }: PRTableProps) {
                   case 'state':
                     return (
                       <td key={column.id} className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStateColor(pr.state)}`}>
+                        <span
+                          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStateColor(pr.state)}`}
+                        >
                           {pr.state}
                         </span>
                       </td>
                     );
                   case 'labels':
                     return (
-                      <td key={column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td
+                        key={column.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                      >
                         <div className="flex flex-wrap gap-1">
                           {pr.labels.slice(0, 3).map((label) => (
                             <span
@@ -138,44 +149,69 @@ export function PRTable({ pullRequests, columns, isLoading }: PRTableProps) {
                     );
                   case 'assignees':
                     return (
-                      <td key={column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td
+                        key={column.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                      >
                         {pr.assignees.length > 0 ? pr.assignees.join(', ') : '—'}
                       </td>
                     );
                   case 'reviewers':
                     return (
-                      <td key={column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td
+                        key={column.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                      >
                         {pr.reviewers.length > 0 ? pr.reviewers.join(', ') : '—'}
                       </td>
                     );
                   case 'createdAt':
                     return (
-                      <td key={column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td
+                        key={column.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                      >
                         {pr.createdAt.toLocaleDateString()}
                       </td>
                     );
                   case 'updatedAt':
                     return (
-                      <td key={column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td
+                        key={column.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                      >
                         {pr.updatedAt.toLocaleDateString()}
                       </td>
                     );
                   case 'comments':
                     return (
-                      <td key={column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td
+                        key={column.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                      >
                         💬 {pr.comments + pr.reviewComments}
                       </td>
                     );
                   case 'changes':
                     return (
-                      <td key={column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td
+                        key={column.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                      >
                         <span className="text-green-600">+{pr.additions}</span>
                         {' / '}
                         <span className="text-red-600">-{pr.deletions}</span>
                       </td>
                     );
                   default:
-                    return <td key={column.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">—</td>;
+                    return (
+                      <td
+                        key={column.id}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                      >
+                        —
+                      </td>
+                    );
                 }
               })}
             </tr>

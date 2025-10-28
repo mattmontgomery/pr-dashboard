@@ -1,18 +1,15 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { createGitHubClient } from '@/app/lib/github';
-import { transformPullRequest } from '@/app/types';
 import { getGitHubToken } from '@/app/lib/token';
+import { transformPullRequest } from '@/app/types';
 
 export async function GET(request: NextRequest) {
   try {
     const token = getGitHubToken(request);
 
     if (!token) {
-      return NextResponse.json(
-        { error: 'GitHub token is required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'GitHub token is required' }, { status: 401 });
     }
 
     const searchParams = request.nextUrl.searchParams;
@@ -56,17 +53,11 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error fetching pull requests:', error);
-    
+
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json(
-      { error: 'Failed to fetch pull requests' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch pull requests' }, { status: 500 });
   }
 }

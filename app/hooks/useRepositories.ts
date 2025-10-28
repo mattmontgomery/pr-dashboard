@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Repository } from '../types';
 import { rehydrateRepository } from '../types';
 
@@ -16,7 +16,10 @@ interface UseRepositoriesResult {
   refetch: () => Promise<void>;
 }
 
-export function useRepositories({ token, autoFetch = true }: UseRepositoriesOptions): UseRepositoriesResult {
+export function useRepositories({
+  token,
+  autoFetch = true,
+}: UseRepositoriesOptions): UseRepositoriesResult {
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import type { PullRequest, FilterOptions } from '../types';
+import { useCallback, useEffect, useState } from 'react';
+import type { FilterOptions, PullRequest } from '../types';
 import { rehydratePullRequest } from '../types';
 
 interface UsePullRequestsOptions {
@@ -138,7 +138,7 @@ export function usePullRequests({
       const matchesTitle = pr.title.toLowerCase().includes(query);
       const matchesNumber = pr.number.toString().includes(query);
       const matchesAuthor = pr.author.login.toLowerCase().includes(query);
-      
+
       if (!matchesTitle && !matchesNumber && !matchesAuthor) {
         return false;
       }

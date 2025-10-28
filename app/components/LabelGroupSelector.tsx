@@ -16,8 +16,11 @@ export function LabelGroupSelector({
 }: LabelGroupSelectorProps) {
   // Create grouping options: include both full labels and prefixes (before colon)
   const groupingOptions = useMemo(() => {
-    const options = new Map<string, { name: string; color: string; id: string; isPrefix: boolean }>();
-    
+    const options = new Map<
+      string,
+      { name: string; color: string; id: string; isPrefix: boolean }
+    >();
+
     for (const label of availableLabels) {
       // Add the full label
       options.set(label.name, {
@@ -26,7 +29,7 @@ export function LabelGroupSelector({
         id: String(label.id),
         isPrefix: false,
       });
-      
+
       // If label has a colon, also add the prefix as an option
       const colonIndex = label.name.indexOf(':');
       if (colonIndex > 0) {
@@ -41,7 +44,7 @@ export function LabelGroupSelector({
         }
       }
     }
-    
+
     // Sort: prefixes first, then full labels alphabetically
     return Array.from(options.values()).sort((a, b) => {
       if (a.isPrefix !== b.isPrefix) {
@@ -102,9 +105,7 @@ export function LabelGroupSelector({
               }}
             >
               {option.name}
-              {option.isPrefix && (
-                <span className="ml-1 text-xs opacity-70">(prefix)</span>
-              )}
+              {option.isPrefix && <span className="ml-1 text-xs opacity-70">(prefix)</span>}
             </span>
           </label>
         ))}
