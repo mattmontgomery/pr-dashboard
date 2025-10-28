@@ -128,12 +128,15 @@ export const transformRepository = (repo: GitHubRepository): Repository => ({
 export const transformPullRequest = (pr: GitHubPullRequest): PullRequest => {
   const isMerged = !!pr.merged_at;
   const isDraft = pr.draft;
+  const isClosed = pr.state === 'closed';
 
   let state: PullRequest['state'];
-  if (isDraft) {
-    state = 'draft';
-  } else if (isMerged) {
+  if (isMerged) {
     state = 'merged';
+  } else if (isClosed) {
+    state = 'closed';
+  } else if (isDraft) {
+    state = 'draft';
   } else {
     state = pr.state;
   }
