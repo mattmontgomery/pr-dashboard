@@ -4,6 +4,7 @@ import type {
   GitHubPullRequest,
   GitHubRateLimit,
   GitHubRepository,
+  GitHubUser,
 } from '../types/github';
 
 export class GitHubAPIError extends Error {
@@ -158,6 +159,33 @@ export class GitHubClient {
     pullNumber: number
   ): Promise<GitHubPullRequest> {
     return this.fetch<GitHubPullRequest>(`/repos/${owner}/${repo}/pulls/${pullNumber}`);
+  }
+
+  /**
+   * Get reviews for a pull request
+   */
+  async getPullRequestReviews(
+    owner: string,
+    repo: string,
+    pullNumber: number
+  ): Promise<Array<{ state: string; user: GitHubUser }>> {
+    return this.fetch<Array<{ state: string; user: GitHubUser }>>(
+      `/repos/${owner}/${repo}/pulls/${pullNumber}/reviews`
+    );
+  }
+
+  /**
+   * Check if a PR has been approved
+   */
+  async isPullRequestApproved(owner: string, repo: string, pullNumber: number): Promise<boolean> {
+    try {
+      const reviews = await this.getPullRequestReviews(owner, repo, pullNumber);
+      // Check if there's at least one approved review
+      return reviews.some((review) => review.state === 'APPROVED');
+    } catch (error) {
+      console.error(`Failed to check approval status for PR #${pullNumber}:`, error);
+      return false;
+    }
   }
 
   /**

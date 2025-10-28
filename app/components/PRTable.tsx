@@ -96,14 +96,21 @@ export function PRTable({ pullRequests, columns, isLoading }: PRTableProps) {
                     case 'title':
                       return (
                         <td key={column.id} className="px-6 py-4 text-sm text-gray-900">
-                          <a
-                            href={pr.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="max-w-md truncate block hover:text-blue-600 hover:underline"
-                          >
-                            {pr.title}
-                          </a>
+                          <div className="flex items-center gap-2">
+                            <a
+                              href={pr.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="max-w-md truncate block hover:text-blue-600 hover:underline"
+                            >
+                              {pr.title}
+                            </a>
+                            {pr.isApproved && (
+                              <span className="text-green-600 shrink-0" title="Approved">
+                                ✓
+                              </span>
+                            )}
+                          </div>
                         </td>
                       );
                     case 'repository':

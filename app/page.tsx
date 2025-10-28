@@ -28,7 +28,19 @@ export default function Home() {
   });
   const [tokenInput, setTokenInput] = useState('');
   const [selectedRepositories, setSelectedRepositories] = useState<string[]>([]);
-  const [groupByLabels, setGroupByLabels] = useState<string[]>([]);
+  const [groupByLabels, setGroupByLabels] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('pr-dashboard-group-labels');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (error) {
+          console.error('Failed to parse saved group labels:', error);
+        }
+      }
+    }
+    return [];
+  });
   const [filters, setFilters] = useState<Partial<FilterOptions>>({
     states: ['open'],
     labels: [],
@@ -77,6 +89,13 @@ export default function Home() {
 
     loadDefaultRepos();
   }, []);
+
+  // Save group labels to localStorage when they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pr-dashboard-group-labels', JSON.stringify(groupByLabels));
+    }
+  }, [groupByLabels]);
 
   // Hooks
   const {

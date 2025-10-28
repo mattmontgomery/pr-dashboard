@@ -42,6 +42,7 @@ export interface PullRequest {
   deletions: number;
   changedFiles: number;
   isDraft: boolean;
+  isApproved: boolean;
 }
 
 export interface Label {
@@ -171,6 +172,7 @@ export const transformPullRequest = (pr: GitHubPullRequest): PullRequest => {
     deletions: pr.deletions,
     changedFiles: pr.changed_files,
     isDraft,
+    isApproved: false, // Will be set by API when fetching reviews
   };
 };
 
