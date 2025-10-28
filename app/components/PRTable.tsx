@@ -9,7 +9,14 @@ interface PRTableProps {
 }
 
 export function PRTable({ pullRequests, columns, isLoading }: PRTableProps) {
-  const visibleColumns = columns.filter((col) => col.visible).sort((a, b) => a.order - b.order);
+  // Check if there's only one unique repository
+  const uniqueRepos = new Set(pullRequests.map((pr) => pr.repository.fullName));
+  const shouldHideRepoColumn = uniqueRepos.size <= 1;
+
+  const visibleColumns = columns
+    .filter((col) => col.visible)
+    .filter((col) => !(col.id === 'repository' && shouldHideRepoColumn))
+    .sort((a, b) => a.order - b.order);
 
   if (isLoading) {
     return (
