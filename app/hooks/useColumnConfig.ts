@@ -21,6 +21,22 @@ const DEFAULT_COLUMNS: ColumnConfig[] = [
 
 const STORAGE_KEY = 'pr-dashboard-column-config';
 
+// Merge saved columns with defaults, adding any new columns that don't exist
+function mergeColumnsWithDefaults(saved: ColumnConfig[]): ColumnConfig[] {
+  const savedIds = new Set(saved.map((col) => col.id));
+  const merged = [...saved];
+
+  // Add any new default columns that aren't in the saved config
+  for (const defaultCol of DEFAULT_COLUMNS) {
+    if (!savedIds.has(defaultCol.id)) {
+      merged.push(defaultCol);
+    }
+  }
+
+  // Re-sort by order
+  return merged.sort((a, b) => a.order - b.order);
+}
+
 interface UseColumnConfigResult {
   columns: ColumnConfig[];
   updateColumn: (id: ColumnId, updates: Partial<ColumnConfig>) => void;
@@ -36,7 +52,9 @@ export function useColumnConfig(): UseColumnConfigResult {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
-          return JSON.parse(saved);
+          const parsed = JSON.parse(saved);
+          // Merge with defaults to add any new columns
+          return mergeColumnsWithDefaults(parsed);
         } catch (error) {
           console.error('Failed to parse saved column config:', error);
         }

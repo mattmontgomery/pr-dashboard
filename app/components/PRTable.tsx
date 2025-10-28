@@ -77,7 +77,7 @@ export function PRTable({ pullRequests, columns, isLoading }: PRTableProps) {
             const ageInDays = getAgeInDays(pr.createdAt);
             const isOld = ageInDays >= 7;
             const rowClass = isOld
-              ? 'hover:bg-gray-50 transition-colors bg-amber-50'
+              ? 'hover:bg-amber-100 transition-colors bg-amber-50'
               : 'hover:bg-gray-50 transition-colors';
 
             return (
