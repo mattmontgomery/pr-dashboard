@@ -18,6 +18,13 @@ export function PRTable({ pullRequests, columns, isLoading }: PRTableProps) {
     .filter((col) => !(col.id === 'repository' && shouldHideRepoColumn))
     .sort((a, b) => a.order - b.order);
 
+  // Calculate age in days for a PR
+  const getAgeInDays = (createdAt: Date): number => {
+    const now = new Date();
+    const diffInMs = now.getTime() - createdAt.getTime();
+    return Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -66,163 +73,180 @@ export function PRTable({ pullRequests, columns, isLoading }: PRTableProps) {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {pullRequests.map((pr) => (
-            <tr key={pr.id} className="hover:bg-gray-50 transition-colors">
-              {visibleColumns.map((column) => {
-                switch (column.id) {
-                  case 'number':
-                    return (
-                      <td
-                        key={column.id}
-                        className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
-                      >
-                        #{pr.number}
-                      </td>
-                    );
-                  case 'title':
-                    return (
-                      <td key={column.id} className="px-6 py-4 text-sm text-gray-900">
-                        <a
-                          href={pr.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="max-w-md truncate block hover:text-blue-600 hover:underline"
+          {pullRequests.map((pr) => {
+            const ageInDays = getAgeInDays(pr.createdAt);
+            const isOld = ageInDays >= 7;
+            const rowClass = isOld
+              ? 'hover:bg-gray-50 transition-colors bg-amber-50'
+              : 'hover:bg-gray-50 transition-colors';
+
+            return (
+              <tr key={pr.id} className={rowClass}>
+                {visibleColumns.map((column) => {
+                  switch (column.id) {
+                    case 'number':
+                      return (
+                        <td
+                          key={column.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
                         >
-                          {pr.title}
-                        </a>
-                      </td>
-                    );
-                  case 'repository':
-                    return (
-                      <td
-                        key={column.id}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                      >
-                        {pr.repository.fullName}
-                      </td>
-                    );
-                  case 'author':
-                    return (
-                      <td
-                        key={column.id}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                      >
-                        <div className="flex items-center">
-                          <Image
-                            src={pr.author.avatarUrl}
-                            alt={pr.author.login}
-                            width={24}
-                            height={24}
-                            className="h-6 w-6 rounded-full mr-2"
-                          />
-                          {pr.author.login}
-                        </div>
-                      </td>
-                    );
-                  case 'state':
-                    return (
-                      <td key={column.id} className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStateColor(pr.state)}`}
+                          #{pr.number}
+                        </td>
+                      );
+                    case 'title':
+                      return (
+                        <td key={column.id} className="px-6 py-4 text-sm text-gray-900">
+                          <a
+                            href={pr.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="max-w-md truncate block hover:text-blue-600 hover:underline"
+                          >
+                            {pr.title}
+                          </a>
+                        </td>
+                      );
+                    case 'repository':
+                      return (
+                        <td
+                          key={column.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
                         >
-                          {pr.state}
-                        </span>
-                      </td>
-                    );
-                  case 'labels':
-                    return (
-                      <td
-                        key={column.id}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                      >
-                        <div className="flex flex-wrap gap-1">
-                          {pr.labels.slice(0, 3).map((label) => (
-                            <span
-                              key={label.id}
-                              className="px-2 py-1 text-xs rounded-full"
-                              style={{
-                                backgroundColor: `#${label.color}20`,
-                                color: `#${label.color}`,
-                              }}
-                            >
-                              {label.name}
-                            </span>
-                          ))}
-                          {pr.labels.length > 3 && (
-                            <span className="text-xs text-gray-400">+{pr.labels.length - 3}</span>
-                          )}
-                        </div>
-                      </td>
-                    );
-                  case 'assignees':
-                    return (
-                      <td
-                        key={column.id}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                      >
-                        {pr.assignees.length > 0 ? pr.assignees.join(', ') : '—'}
-                      </td>
-                    );
-                  case 'reviewers':
-                    return (
-                      <td
-                        key={column.id}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                      >
-                        {pr.reviewers.length > 0 ? pr.reviewers.join(', ') : '—'}
-                      </td>
-                    );
-                  case 'createdAt':
-                    return (
-                      <td
-                        key={column.id}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                      >
-                        {pr.createdAt.toLocaleDateString()}
-                      </td>
-                    );
-                  case 'updatedAt':
-                    return (
-                      <td
-                        key={column.id}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                      >
-                        {pr.updatedAt.toLocaleDateString()}
-                      </td>
-                    );
-                  case 'comments':
-                    return (
-                      <td
-                        key={column.id}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                      >
-                        💬 {pr.comments + pr.reviewComments}
-                      </td>
-                    );
-                  case 'changes':
-                    return (
-                      <td
-                        key={column.id}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                      >
-                        <span className="text-green-600">+{pr.additions}</span>
-                        {' / '}
-                        <span className="text-red-600">-{pr.deletions}</span>
-                      </td>
-                    );
-                  default:
-                    return (
-                      <td
-                        key={column.id}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
-                      >
-                        —
-                      </td>
-                    );
-                }
-              })}
-            </tr>
-          ))}
+                          {pr.repository.fullName}
+                        </td>
+                      );
+                    case 'author':
+                      return (
+                        <td
+                          key={column.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
+                          <div className="flex items-center">
+                            <Image
+                              src={pr.author.avatarUrl}
+                              alt={pr.author.login}
+                              width={24}
+                              height={24}
+                              className="h-6 w-6 rounded-full mr-2"
+                            />
+                            {pr.author.login}
+                          </div>
+                        </td>
+                      );
+                    case 'state':
+                      return (
+                        <td key={column.id} className="px-6 py-4 whitespace-nowrap">
+                          <span
+                            className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStateColor(pr.state)}`}
+                          >
+                            {pr.state}
+                          </span>
+                        </td>
+                      );
+                    case 'age':
+                      return (
+                        <td
+                          key={column.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium"
+                        >
+                          {ageInDays}d
+                        </td>
+                      );
+                    case 'labels':
+                      return (
+                        <td
+                          key={column.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
+                          <div className="flex flex-wrap gap-1">
+                            {pr.labels.slice(0, 3).map((label) => (
+                              <span
+                                key={label.id}
+                                className="px-2 py-1 text-xs rounded-full"
+                                style={{
+                                  backgroundColor: `#${label.color}20`,
+                                  color: `#${label.color}`,
+                                }}
+                              >
+                                {label.name}
+                              </span>
+                            ))}
+                            {pr.labels.length > 3 && (
+                              <span className="text-xs text-gray-400">+{pr.labels.length - 3}</span>
+                            )}
+                          </div>
+                        </td>
+                      );
+                    case 'assignees':
+                      return (
+                        <td
+                          key={column.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
+                          {pr.assignees.length > 0 ? pr.assignees.join(', ') : '—'}
+                        </td>
+                      );
+                    case 'reviewers':
+                      return (
+                        <td
+                          key={column.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
+                          {pr.reviewers.length > 0 ? pr.reviewers.join(', ') : '—'}
+                        </td>
+                      );
+                    case 'createdAt':
+                      return (
+                        <td
+                          key={column.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
+                          {pr.createdAt.toLocaleDateString()}
+                        </td>
+                      );
+                    case 'updatedAt':
+                      return (
+                        <td
+                          key={column.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
+                          {pr.updatedAt.toLocaleDateString()}
+                        </td>
+                      );
+                    case 'comments':
+                      return (
+                        <td
+                          key={column.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
+                          💬 {pr.comments + pr.reviewComments}
+                        </td>
+                      );
+                    case 'changes':
+                      return (
+                        <td
+                          key={column.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
+                          <span className="text-green-600">+{pr.additions}</span>
+                          {' / '}
+                          <span className="text-red-600">-{pr.deletions}</span>
+                        </td>
+                      );
+                    default:
+                      return (
+                        <td
+                          key={column.id}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
+                          —
+                        </td>
+                      );
+                  }
+                })}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

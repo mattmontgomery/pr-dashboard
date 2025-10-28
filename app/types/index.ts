@@ -78,6 +78,7 @@ export type ColumnId =
   | 'repository'
   | 'author'
   | 'state'
+  | 'age'
   | 'labels'
   | 'assignees'
   | 'reviewers'
